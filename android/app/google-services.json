@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "849855858531",
+    "project_id": "goaly-app-39631",
+    "storage_bucket": "goaly-app-39631.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:849855858531:android:24a14e38e54152c3697556",
+        "android_client_info": {
+          "package_name": "com.example.goaly_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD_YLkLMIo-RNJa40vIJv9GaAnpzXVnvMo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
