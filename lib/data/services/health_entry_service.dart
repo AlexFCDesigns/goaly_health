@@ -8,11 +8,15 @@ class HealthEntryService {
   // Crear registro de salud
   Future<void> createHealthEntry(HealthEntry entry) async {
     try {
+      print('HealthEntryService: Creando registro con ID: ${entry.id}');
+      print('HealthEntryService: Datos del registro: ${entry.toJson()}');
       await _firestore
           .collection(_collection)
           .doc(entry.id)
           .set(entry.toJson());
+      print('HealthEntryService: Registro creado exitosamente en Firestore');
     } catch (e) {
+      print('HealthEntryService: Error al crear registro: $e');
       throw 'Error al crear registro de salud: $e';
     }
   }
@@ -36,16 +40,22 @@ class HealthEntryService {
 
   // Stream de registros de salud de un usuario
   Stream<List<HealthEntry>> getHealthEntriesStream(String userId) {
+    print('HealthEntryService: Iniciando stream para usuario: $userId');
     return _firestore
         .collection(_collection)
         .where('userId', isEqualTo: userId)
         .orderBy('fecha', descending: true)
         .snapshots()
-        .map(
-          (snapshot) => snapshot.docs
+        .map((snapshot) {
+          print(
+            'HealthEntryService: Snapshot recibido con ${snapshot.docs.length} documentos',
+          );
+          final entries = snapshot.docs
               .map((doc) => HealthEntry.fromMap(doc.data()))
-              .toList(),
-        );
+              .toList();
+          print('HealthEntryService: Entradas procesadas: ${entries.length}');
+          return entries;
+        });
   }
 
   // Obtener un registro específico

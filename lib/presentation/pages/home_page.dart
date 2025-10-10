@@ -7,166 +7,280 @@ import 'login_page.dart';
 import 'add_health_entry_page.dart';
 import 'charts_page.dart';
 
-class HomePage extends ConsumerWidget {
+class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends ConsumerState<HomePage>
+    with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      // La app se pausó, no hacer nada especial
+    }
+  }
+
+  // Manejar el botón de retroceso del sistema
+  Future<bool> _onWillPop() async {
+    return await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Cerrar sesión'),
+            content: const Text('¿Estás seguro de que quieres cerrar sesión?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text('Cancelar'),
+              ),
+              TextButton(
+                onPressed: () async {
+                  Navigator.of(context).pop(true);
+                  await ref.read(authProvider.notifier).signOut();
+                  if (mounted) {
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(
+                        builder: (context) => const LoginPage(),
+                      ),
+                    );
+                  }
+                },
+                child: const Text('Cerrar sesión'),
+              ),
+            ],
+          ),
+        ) ??
+        false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final authState = ref.watch(authProvider);
     final healthEntryState = ref.watch(
       healthEntryProvider(authState.firebaseUser?.uid ?? ''),
     );
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Goaly Health'),
-        backgroundColor: Colors.blue,
-        foregroundColor: Colors.white,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.bar_chart),
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => const ChartsPage()),
-              );
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () async {
-              await ref.read(authProvider.notifier).signOut();
-              if (context.mounted) {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => const LoginPage()),
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Goaly Health'),
+          backgroundColor: Colors.blue,
+          foregroundColor: Colors.white,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.bar_chart),
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => const ChartsPage()),
                 );
-              }
-            },
-          ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Saludo personalizado
-            Text(
-              '¡Hola, ${authState.appUser?.name ?? 'Usuario'}!',
-              style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+              },
             ),
-            const SizedBox(height: 16),
-
-            // Información del usuario
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Información de tu cuenta:',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    _buildInfoRow('Email:', authState.appUser?.email ?? ''),
-                    const SizedBox(height: 8),
-                    _buildInfoRow(
-                      'Miembro desde:',
-                      _formatDate(authState.appUser?.fechaRegistro),
-                    ),
-                    const SizedBox(height: 8),
-                    _buildInfoRow(
-                      'Total de registros:',
-                      '${healthEntryState.entries.length}',
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 24),
-
-            // Título de registros
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Registros de Progreso',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                TextButton.icon(
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const AddHealthEntryPage(),
-                      ),
-                    );
-                  },
-                  icon: const Icon(Icons.add),
-                  label: const Text('Agregar'),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-
-            // Lista de registros
-            Expanded(
-              child: healthEntryState.isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : healthEntryState.entries.isEmpty
-                  ? const Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.fitness_center_outlined,
-                            size: 80,
-                            color: Colors.grey,
-                          ),
-                          SizedBox(height: 16),
-                          Text(
-                            'No tienes registros aún',
-                            style: TextStyle(fontSize: 18, color: Colors.grey),
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            'Agrega tu primer registro de progreso',
-                            style: TextStyle(fontSize: 14, color: Colors.grey),
-                          ),
-                        ],
-                      ),
-                    )
-                  : ListView.builder(
-                      itemCount: healthEntryState.entries.length,
-                      itemBuilder: (context, index) {
-                        final entry = healthEntryState.entries[index];
-                        return HealthEntryCard(
-                          entry: entry,
-                          onDelete: () {
-                            ref
-                                .read(
-                                  healthEntryProvider(
-                                    authState.firebaseUser?.uid ?? '',
-                                  ).notifier,
-                                )
-                                .deleteHealthEntry(entry.id);
-                          },
-                        );
-                      },
-                    ),
+            IconButton(
+              icon: const Icon(Icons.logout),
+              onPressed: () async {
+                await ref.read(authProvider.notifier).signOut();
+                if (context.mounted) {
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => const LoginPage()),
+                  );
+                }
+              },
             ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => const AddHealthEntryPage()),
-          );
-        },
-        child: const Icon(Icons.add),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Saludo personalizado
+              Text(
+                '¡Hola, ${authState.appUser?.name ?? 'Usuario'}!',
+                style: const TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // Información del usuario
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Información de tu cuenta:',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      _buildInfoRow('Email:', authState.appUser?.email ?? ''),
+                      const SizedBox(height: 8),
+                      _buildInfoRow(
+                        'Miembro desde:',
+                        _formatDate(authState.appUser?.fechaRegistro),
+                      ),
+                      const SizedBox(height: 8),
+                      _buildInfoRow(
+                        'Total de registros:',
+                        '${healthEntryState.entries.length}',
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+
+              // Título de registros
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Registros de Progreso',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  TextButton.icon(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const AddHealthEntryPage(),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.add),
+                    label: const Text('Agregar'),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+
+              // Lista de registros
+              Expanded(
+                child: healthEntryState.isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : healthEntryState.error != null
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.error_outline,
+                              size: 80,
+                              color: Colors.red,
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              'Error al cargar registros',
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.red[700],
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              healthEntryState.error!,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 16),
+                            ElevatedButton(
+                              onPressed: () {
+                                ref
+                                    .read(
+                                      healthEntryProvider(
+                                        authState.firebaseUser?.uid ?? '',
+                                      ).notifier,
+                                    )
+                                    .clearError();
+                              },
+                              child: const Text('Reintentar'),
+                            ),
+                          ],
+                        ),
+                      )
+                    : healthEntryState.entries.isEmpty
+                    ? const Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.fitness_center_outlined,
+                              size: 80,
+                              color: Colors.grey,
+                            ),
+                            SizedBox(height: 16),
+                            Text(
+                              'No tienes registros aún',
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            SizedBox(height: 8),
+                            Text(
+                              'Agrega tu primer registro de progreso',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    : ListView.builder(
+                        itemCount: healthEntryState.entries.length,
+                        itemBuilder: (context, index) {
+                          final entry = healthEntryState.entries[index];
+                          return HealthEntryCard(
+                            entry: entry,
+                            onDelete: () {
+                              ref
+                                  .read(
+                                    healthEntryProvider(
+                                      authState.firebaseUser?.uid ?? '',
+                                    ).notifier,
+                                  )
+                                  .deleteHealthEntry(entry.id);
+                            },
+                          );
+                        },
+                      ),
+              ),
+            ],
+          ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const AddHealthEntryPage(),
+              ),
+            );
+          },
+          child: const Icon(Icons.add),
+        ),
       ),
     );
   }

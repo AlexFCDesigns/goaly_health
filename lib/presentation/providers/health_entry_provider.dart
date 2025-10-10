@@ -36,19 +36,37 @@ class HealthEntryNotifier extends StateNotifier<HealthEntryState> {
 
   void _init() {
     // Escuchar cambios en los registros de salud
-    _healthEntryRepository.getHealthEntriesStream(_userId).listen((entries) {
-      state = state.copyWith(entries: entries, isLoading: false, error: null);
-    });
+    _healthEntryRepository
+        .getHealthEntriesStream(_userId)
+        .listen(
+          (entries) {
+            print(
+              'HealthEntryProvider: Recibidos ${entries.length} registros para usuario $_userId',
+            );
+            state = state.copyWith(
+              entries: entries,
+              isLoading: false,
+              error: null,
+            );
+          },
+          onError: (error) {
+            print('HealthEntryProvider: Error en stream: $error');
+            state = state.copyWith(isLoading: false, error: error.toString());
+          },
+        );
   }
 
   // Crear nuevo registro de salud
   Future<void> createHealthEntry(HealthEntry entry) async {
+    print('HealthEntryProvider: Creando registro para usuario $_userId');
     state = state.copyWith(isLoading: true, error: null);
 
     try {
       await _healthEntryRepository.createHealthEntry(entry);
+      print('HealthEntryProvider: Registro creado exitosamente');
       // El stream se encargará de actualizar la lista
     } catch (e) {
+      print('HealthEntryProvider: Error al crear registro: $e');
       state = state.copyWith(isLoading: false, error: e.toString());
     }
   }

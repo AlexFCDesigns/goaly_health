@@ -1,1 +1,35 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"goaly-app-39631","appId":"1:849855858531:android:24a14e38e54152c3697556","fileOutput":"android/app/google-services.json"}},"ios":{"default":{"projectId":"goaly-app-39631","appId":"1:849855858531:ios:e93a5f8cdfbb775a697556","uploadDebugSymbols":false,"fileOutput":"ios/Runner/GoogleService-Info.plist"}},"dart":{"lib/firebase_options.dart":{"projectId":"goaly-app-39631","configurations":{"android":"1:849855858531:android:24a14e38e54152c3697556","ios":"1:849855858531:ios:e93a5f8cdfbb775a697556","web":"1:849855858531:web:9519be4c88379f05697556"}}}}}}
+{
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "goaly-app-39631",
+          "appId": "1:849855858531:android:24a14e38e54152c3697556",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "goaly-app-39631",
+          "appId": "1:849855858531:ios:e93a5f8cdfbb775a697556",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "goaly-app-39631",
+          "configurations": {
+            "android": "1:849855858531:android:24a14e38e54152c3697556",
+            "ios": "1:849855858531:ios:e93a5f8cdfbb775a697556",
+            "web": "1:849855858531:web:9519be4c88379f05697556"
+          }
+        }
+      }
+    }
+  }
+}}
