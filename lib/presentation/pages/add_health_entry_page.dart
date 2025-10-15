@@ -100,9 +100,14 @@ class _AddHealthEntryPageState extends ConsumerState<AddHealthEntryPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Agregar Registro'),
-        backgroundColor: Colors.blue,
-        foregroundColor: Colors.white,
+        title: const Text(
+          'Agregar Registro',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.black,
+        elevation: 0,
+        shadowColor: Colors.transparent,
       ),
       body: Padding(
         padding: const EdgeInsets.all(24.0),

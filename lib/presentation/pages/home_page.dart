@@ -17,6 +17,45 @@ class HomePage extends ConsumerStatefulWidget {
 
 class _HomePageState extends ConsumerState<HomePage>
     with WidgetsBindingObserver {
+  Future<bool> _showConfirmDialog({
+    required String title,
+    required String message,
+    required String confirmLabel,
+    Color? confirmColor,
+  }) async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: BorderSide(color: Colors.blue.withOpacity(0.2)),
+        ),
+        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+        content: Text(message, style: const TextStyle(color: Colors.black87)),
+        actionsPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: confirmColor ?? Colors.red.shade600,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(confirmLabel),
+          ),
+        ],
+      ),
+    );
+    return result ?? false;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -41,6 +80,7 @@ class _HomePageState extends ConsumerState<HomePage>
     return await showDialog<bool>(
           context: context,
           builder: (context) => AlertDialog(
+            surfaceTintColor: Colors.white,
             title: const Text('Cerrar sesión'),
             content: const Text('¿Estás seguro de que quieres cerrar sesión?'),
             actions: [
@@ -79,9 +119,15 @@ class _HomePageState extends ConsumerState<HomePage>
       onWillPop: _onWillPop,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Goaly Health'),
-          backgroundColor: Colors.blue,
-          foregroundColor: Colors.white,
+          title: const Text(
+            'Goaly Health',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          backgroundColor: Colors.transparent,
+          foregroundColor: Colors.black,
+          elevation: 0,
+          shadowColor: Colors.transparent,
+
           actions: [
             IconButton(
               icon: const Icon(Icons.person),
@@ -102,11 +148,21 @@ class _HomePageState extends ConsumerState<HomePage>
             IconButton(
               icon: const Icon(Icons.logout),
               onPressed: () async {
-                await ref.read(authProvider.notifier).signOut();
-                if (context.mounted) {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context) => const LoginPage()),
-                  );
+                final confirmed = await _showConfirmDialog(
+                  title: 'Cerrar sesión',
+                  message: '¿Seguro que deseas cerrar sesión?',
+                  confirmLabel: 'Cerrar sesión',
+                  confirmColor: Colors.red.shade600,
+                );
+                if (confirmed) {
+                  await ref.read(authProvider.notifier).signOut();
+                  if (context.mounted) {
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(
+                        builder: (context) => const LoginPage(),
+                      ),
+                    );
+                  }
                 }
               },
             ),
@@ -128,9 +184,28 @@ class _HomePageState extends ConsumerState<HomePage>
               const SizedBox(height: 16),
 
               // Información del usuario
-              Card(
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [Colors.blue.shade50, Colors.blue.shade100],
+                  ),
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.blue.withOpacity(0.1),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                  border: Border.all(
+                    color: Colors.blue.withOpacity(0.2),
+                    width: 1,
+                  ),
+                ),
                 child: Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(20),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -265,13 +340,24 @@ class _HomePageState extends ConsumerState<HomePage>
                           return HealthEntryCard(
                             entry: entry,
                             onDelete: () {
-                              ref
-                                  .read(
-                                    healthEntryProvider(
-                                      authState.firebaseUser?.uid ?? '',
-                                    ).notifier,
-                                  )
-                                  .deleteHealthEntry(entry.id);
+                              () async {
+                                final confirmed = await _showConfirmDialog(
+                                  title: 'Eliminar registro',
+                                  message:
+                                      '¿Deseas eliminar este registro? Esta acción no se puede deshacer.',
+                                  confirmLabel: 'Eliminar',
+                                  confirmColor: Colors.red.shade600,
+                                );
+                                if (confirmed) {
+                                  ref
+                                      .read(
+                                        healthEntryProvider(
+                                          authState.firebaseUser?.uid ?? '',
+                                        ).notifier,
+                                      )
+                                      .deleteHealthEntry(entry.id);
+                                }
+                              }();
                             },
                           );
                         },

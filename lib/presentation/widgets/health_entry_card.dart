@@ -78,9 +78,9 @@ class HealthEntryCard extends StatelessWidget {
               crossAxisCount: 2,
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              childAspectRatio: 2.2,
+              childAspectRatio: 2.9,
               crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
+              mainAxisSpacing: 10,
               children: [
                 _buildModernMetricItem(
                   'Peso',

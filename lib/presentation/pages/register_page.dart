@@ -139,9 +139,14 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Registro - Paso ${_currentStep + 1} de 3'),
+        title: Text(
+          'Registro - Paso ${_currentStep + 1} de 3',
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
         backgroundColor: Colors.transparent,
+        foregroundColor: Colors.black,
         elevation: 0,
+        shadowColor: Colors.transparent,
         leading: _currentStep > 0
             ? IconButton(
                 icon: const Icon(Icons.arrow_back),

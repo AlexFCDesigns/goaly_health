@@ -21,9 +21,14 @@ class ChartsPage extends ConsumerWidget {
     if (healthEntryState.entries.isEmpty) {
       return Scaffold(
         appBar: AppBar(
-          title: const Text('Gráficos de Evolución'),
-          backgroundColor: Colors.blue,
-          foregroundColor: Colors.white,
+          title: const Text(
+            'Gráficos de Evolución',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          backgroundColor: Colors.transparent,
+          foregroundColor: Colors.black,
+          elevation: 0,
+          shadowColor: Colors.transparent,
         ),
         body: const Center(
           child: Column(
@@ -48,9 +53,14 @@ class ChartsPage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Gráficos de Evolución'),
-        backgroundColor: Colors.blue,
-        foregroundColor: Colors.white,
+        title: const Text(
+          'Gráficos de Evolución',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.black,
+        elevation: 0,
+        shadowColor: Colors.transparent,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
