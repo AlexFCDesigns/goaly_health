@@ -6,6 +6,7 @@ import '../widgets/health_entry_card.dart';
 import 'login_page.dart';
 import 'add_health_entry_page.dart';
 import 'charts_page.dart';
+import 'profile_page.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -82,6 +83,14 @@ class _HomePageState extends ConsumerState<HomePage>
           backgroundColor: Colors.blue,
           foregroundColor: Colors.white,
           actions: [
+            IconButton(
+              icon: const Icon(Icons.person),
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => const ProfilePage()),
+                );
+              },
+            ),
             IconButton(
               icon: const Icon(Icons.bar_chart),
               onPressed: () {

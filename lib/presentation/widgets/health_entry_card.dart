@@ -9,53 +9,108 @@ class HealthEntryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Colors.blue.shade50, Colors.blue.shade100],
+        ),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.blue.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+        border: Border.all(color: Colors.blue.withOpacity(0.2), width: 1),
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Fecha
+            // Header con fecha y acciones
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  _formatDate(entry.fecha),
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.shade600,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    _formatDate(entry.fecha),
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
                 if (onDelete != null)
-                  IconButton(
-                    icon: const Icon(Icons.delete, color: Colors.red),
-                    onPressed: onDelete,
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.red.shade50,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: IconButton(
+                      icon: Icon(
+                        Icons.delete_outline,
+                        color: Colors.red.shade600,
+                      ),
+                      onPressed: onDelete,
+                      iconSize: 20,
+                    ),
                   ),
               ],
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 20),
 
-            // Métricas en grid
+            // Métricas en grid moderno
             GridView.count(
               crossAxisCount: 2,
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              childAspectRatio: 2.5,
+              childAspectRatio: 2.2,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 12,
               children: [
-                _buildMetricItem('Peso', '${entry.peso.toStringAsFixed(1)} kg'),
-                _buildMetricItem('IMC', entry.imc.toStringAsFixed(1)),
-                _buildMetricItem(
+                _buildModernMetricItem(
+                  'Peso',
+                  '${entry.peso.toStringAsFixed(1)} kg',
+                  Icons.monitor_weight,
+                  Colors.green,
+                ),
+                _buildModernMetricItem(
+                  'IMC',
+                  entry.imc.toStringAsFixed(1),
+                  Icons.trending_up,
+                  Colors.orange,
+                ),
+                _buildModernMetricItem(
                   'Grasa Corporal',
                   '${entry.grasaCorporal.toStringAsFixed(1)}%',
+                  Icons.pie_chart,
+                  Colors.red,
                 ),
-                _buildMetricItem(
+                _buildModernMetricItem(
                   'Masa Muscular',
                   '${entry.masaMuscular.toStringAsFixed(1)} kg',
+                  Icons.fitness_center,
+                  Colors.purple,
                 ),
-                _buildMetricItem(
+                _buildModernMetricItem(
                   'Grasa Visceral',
                   entry.grasaVisceral.toStringAsFixed(1),
+                  Icons.warning,
+                  Colors.amber,
                 ),
               ],
             ),
@@ -65,24 +120,59 @@ class HealthEntryCard extends StatelessWidget {
     );
   }
 
-  Widget _buildMetricItem(String label, String value) {
+  Widget _buildModernMetricItem(
+    String label,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: const TextStyle(
-              fontSize: 12,
-              color: Colors.grey,
-              fontWeight: FontWeight.w500,
-            ),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
           ),
-          const SizedBox(height: 2),
-          Text(
-            value,
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(icon, color: color, size: 16),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: const TextStyle(
+                    fontSize: 11,
+                    color: Colors.grey,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  value,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),

@@ -67,6 +67,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     required String email,
     required String password,
     required String name,
+    Map<String, dynamic>? userData,
   }) async {
     state = state.copyWith(isLoading: true, error: null);
 
@@ -76,12 +77,20 @@ class AuthNotifier extends StateNotifier<AuthState> {
         password: password,
       );
 
-      // Crear usuario en Firestore
+      // Crear usuario en Firestore con datos del perfil
       final user = AppUser(
         id: credential.user!.uid,
         name: name,
         email: email,
         fechaRegistro: DateTime.now(),
+        altura: userData?['altura'] ?? 170.0,
+        pesoObjetivo: userData?['pesoObjetivo'] ?? 70.0,
+        genero: userData?['genero'] ?? 'masculino',
+        fechaNacimiento:
+            userData?['fechaNacimiento'] ??
+            DateTime.now().subtract(const Duration(days: 365 * 25)),
+        nivelActividad: userData?['nivelActividad'] ?? 'moderado',
+        objetivoSalud: userData?['objetivoSalud'],
       );
 
       await _userRepository.createUser(user);

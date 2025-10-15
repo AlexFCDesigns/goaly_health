@@ -20,7 +20,22 @@ class _AddHealthEntryPageState extends ConsumerState<AddHealthEntryPage> {
   final _grasaCorporalController = TextEditingController();
   final _masaMuscularController = TextEditingController();
   final _grasaVisceralController = TextEditingController();
-  final _alturaController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  void _loadUserData() {
+    final authState = ref.read(authProvider);
+    final user = authState.appUser;
+
+    if (user != null) {
+      // Pre-llenar con datos del perfil si están disponibles
+      // Por ejemplo, podríamos mostrar el peso objetivo como referencia
+    }
+  }
 
   @override
   void dispose() {
@@ -28,16 +43,26 @@ class _AddHealthEntryPageState extends ConsumerState<AddHealthEntryPage> {
     _grasaCorporalController.dispose();
     _masaMuscularController.dispose();
     _grasaVisceralController.dispose();
-    _alturaController.dispose();
     super.dispose();
   }
 
   void _handleSubmit() {
     if (_formKey.currentState!.validate()) {
       final authState = ref.read(authProvider);
+      final user = authState.appUser;
+
+      if (user == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Error: Usuario no encontrado'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
       final peso = double.parse(_pesoController.text);
-      final altura =
-          double.parse(_alturaController.text) / 100; // Convertir cm a m
+      final altura = user.altura / 100; // Convertir cm a m desde el perfil
       final imc = HealthEntry.calculateIMC(peso, altura);
 
       final entry = HealthEntry(
@@ -101,23 +126,54 @@ class _AddHealthEntryPageState extends ConsumerState<AddHealthEntryPage> {
                   style: TextStyle(fontSize: 16, color: Colors.grey),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: 16),
+
+                // Información del perfil
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.shade50,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.blue.shade200),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        '📋 Información de tu perfil',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Altura: ${authState.appUser?.altura.toStringAsFixed(0)} cm',
+                        style: const TextStyle(fontSize: 14),
+                      ),
+                      Text(
+                        'Peso objetivo: ${authState.appUser?.pesoObjetivo.toStringAsFixed(1)} kg',
+                        style: const TextStyle(fontSize: 14),
+                      ),
+                      Text(
+                        'IMC se calculará automáticamente',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey[600],
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24),
 
                 // Campo de peso
                 CustomTextField(
                   controller: _pesoController,
-                  label: 'Peso (kg)',
+                  label: 'Peso actual (kg)',
                   keyboardType: TextInputType.number,
                   validator: Validators.validateWeight,
-                ),
-                const SizedBox(height: 16),
-
-                // Campo de altura
-                CustomTextField(
-                  controller: _alturaController,
-                  label: 'Altura (cm)',
-                  keyboardType: TextInputType.number,
-                  validator: Validators.validateHeight,
                 ),
                 const SizedBox(height: 16),
 
@@ -160,9 +216,9 @@ class _AddHealthEntryPageState extends ConsumerState<AddHealthEntryPage> {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.blue.shade50,
+                    color: Colors.green.shade50,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.blue.shade200),
+                    border: Border.all(color: Colors.green.shade200),
                   ),
                   child: const Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -176,8 +232,16 @@ class _AddHealthEntryPageState extends ConsumerState<AddHealthEntryPage> {
                       ),
                       SizedBox(height: 8),
                       Text(
-                        'El IMC se calculará automáticamente basado en tu peso y altura.',
+                        'El IMC se calculará automáticamente usando tu peso actual y la altura de tu perfil.',
                         style: TextStyle(fontSize: 14),
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        'Si necesitas cambiar tu altura, ve a tu perfil de usuario.',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontStyle: FontStyle.italic,
+                        ),
                       ),
                     ],
                   ),

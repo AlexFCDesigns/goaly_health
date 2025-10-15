@@ -24,7 +24,16 @@ mixin _$AppUser {
   String get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   String get email => throw _privateConstructorUsedError;
-  DateTime get fechaRegistro => throw _privateConstructorUsedError;
+  DateTime get fechaRegistro =>
+      throw _privateConstructorUsedError; // Datos inamovibles del perfil
+  double get altura => throw _privateConstructorUsedError; // en cm
+  double get pesoObjetivo => throw _privateConstructorUsedError; // en kg
+  String get genero =>
+      throw _privateConstructorUsedError; // 'masculino' o 'femenino'
+  DateTime get fechaNacimiento => throw _privateConstructorUsedError;
+  String get nivelActividad =>
+      throw _privateConstructorUsedError; // 'sedentario', 'ligero', 'moderado', 'intenso', 'muy_intenso'
+  String? get objetivoSalud => throw _privateConstructorUsedError;
 
   /// Serializes this AppUser to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -40,7 +49,18 @@ abstract class $AppUserCopyWith<$Res> {
   factory $AppUserCopyWith(AppUser value, $Res Function(AppUser) then) =
       _$AppUserCopyWithImpl<$Res, AppUser>;
   @useResult
-  $Res call({String id, String name, String email, DateTime fechaRegistro});
+  $Res call({
+    String id,
+    String name,
+    String email,
+    DateTime fechaRegistro,
+    double altura,
+    double pesoObjetivo,
+    String genero,
+    DateTime fechaNacimiento,
+    String nivelActividad,
+    String? objetivoSalud,
+  });
 }
 
 /// @nodoc
@@ -62,6 +82,12 @@ class _$AppUserCopyWithImpl<$Res, $Val extends AppUser>
     Object? name = null,
     Object? email = null,
     Object? fechaRegistro = null,
+    Object? altura = null,
+    Object? pesoObjetivo = null,
+    Object? genero = null,
+    Object? fechaNacimiento = null,
+    Object? nivelActividad = null,
+    Object? objetivoSalud = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -81,6 +107,30 @@ class _$AppUserCopyWithImpl<$Res, $Val extends AppUser>
                 ? _value.fechaRegistro
                 : fechaRegistro // ignore: cast_nullable_to_non_nullable
                       as DateTime,
+            altura: null == altura
+                ? _value.altura
+                : altura // ignore: cast_nullable_to_non_nullable
+                      as double,
+            pesoObjetivo: null == pesoObjetivo
+                ? _value.pesoObjetivo
+                : pesoObjetivo // ignore: cast_nullable_to_non_nullable
+                      as double,
+            genero: null == genero
+                ? _value.genero
+                : genero // ignore: cast_nullable_to_non_nullable
+                      as String,
+            fechaNacimiento: null == fechaNacimiento
+                ? _value.fechaNacimiento
+                : fechaNacimiento // ignore: cast_nullable_to_non_nullable
+                      as DateTime,
+            nivelActividad: null == nivelActividad
+                ? _value.nivelActividad
+                : nivelActividad // ignore: cast_nullable_to_non_nullable
+                      as String,
+            objetivoSalud: freezed == objetivoSalud
+                ? _value.objetivoSalud
+                : objetivoSalud // ignore: cast_nullable_to_non_nullable
+                      as String?,
           )
           as $Val,
     );
@@ -95,7 +145,18 @@ abstract class _$$AppUserImplCopyWith<$Res> implements $AppUserCopyWith<$Res> {
   ) = __$$AppUserImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String id, String name, String email, DateTime fechaRegistro});
+  $Res call({
+    String id,
+    String name,
+    String email,
+    DateTime fechaRegistro,
+    double altura,
+    double pesoObjetivo,
+    String genero,
+    DateTime fechaNacimiento,
+    String nivelActividad,
+    String? objetivoSalud,
+  });
 }
 
 /// @nodoc
@@ -116,6 +177,12 @@ class __$$AppUserImplCopyWithImpl<$Res>
     Object? name = null,
     Object? email = null,
     Object? fechaRegistro = null,
+    Object? altura = null,
+    Object? pesoObjetivo = null,
+    Object? genero = null,
+    Object? fechaNacimiento = null,
+    Object? nivelActividad = null,
+    Object? objetivoSalud = freezed,
   }) {
     return _then(
       _$AppUserImpl(
@@ -135,6 +202,30 @@ class __$$AppUserImplCopyWithImpl<$Res>
             ? _value.fechaRegistro
             : fechaRegistro // ignore: cast_nullable_to_non_nullable
                   as DateTime,
+        altura: null == altura
+            ? _value.altura
+            : altura // ignore: cast_nullable_to_non_nullable
+                  as double,
+        pesoObjetivo: null == pesoObjetivo
+            ? _value.pesoObjetivo
+            : pesoObjetivo // ignore: cast_nullable_to_non_nullable
+                  as double,
+        genero: null == genero
+            ? _value.genero
+            : genero // ignore: cast_nullable_to_non_nullable
+                  as String,
+        fechaNacimiento: null == fechaNacimiento
+            ? _value.fechaNacimiento
+            : fechaNacimiento // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+        nivelActividad: null == nivelActividad
+            ? _value.nivelActividad
+            : nivelActividad // ignore: cast_nullable_to_non_nullable
+                  as String,
+        objetivoSalud: freezed == objetivoSalud
+            ? _value.objetivoSalud
+            : objetivoSalud // ignore: cast_nullable_to_non_nullable
+                  as String?,
       ),
     );
   }
@@ -148,6 +239,12 @@ class _$AppUserImpl implements _AppUser {
     required this.name,
     required this.email,
     required this.fechaRegistro,
+    required this.altura,
+    required this.pesoObjetivo,
+    required this.genero,
+    required this.fechaNacimiento,
+    required this.nivelActividad,
+    this.objetivoSalud,
   });
 
   factory _$AppUserImpl.fromJson(Map<String, dynamic> json) =>
@@ -161,10 +258,27 @@ class _$AppUserImpl implements _AppUser {
   final String email;
   @override
   final DateTime fechaRegistro;
+  // Datos inamovibles del perfil
+  @override
+  final double altura;
+  // en cm
+  @override
+  final double pesoObjetivo;
+  // en kg
+  @override
+  final String genero;
+  // 'masculino' o 'femenino'
+  @override
+  final DateTime fechaNacimiento;
+  @override
+  final String nivelActividad;
+  // 'sedentario', 'ligero', 'moderado', 'intenso', 'muy_intenso'
+  @override
+  final String? objetivoSalud;
 
   @override
   String toString() {
-    return 'AppUser(id: $id, name: $name, email: $email, fechaRegistro: $fechaRegistro)';
+    return 'AppUser(id: $id, name: $name, email: $email, fechaRegistro: $fechaRegistro, altura: $altura, pesoObjetivo: $pesoObjetivo, genero: $genero, fechaNacimiento: $fechaNacimiento, nivelActividad: $nivelActividad, objetivoSalud: $objetivoSalud)';
   }
 
   @override
@@ -176,12 +290,34 @@ class _$AppUserImpl implements _AppUser {
             (identical(other.name, name) || other.name == name) &&
             (identical(other.email, email) || other.email == email) &&
             (identical(other.fechaRegistro, fechaRegistro) ||
-                other.fechaRegistro == fechaRegistro));
+                other.fechaRegistro == fechaRegistro) &&
+            (identical(other.altura, altura) || other.altura == altura) &&
+            (identical(other.pesoObjetivo, pesoObjetivo) ||
+                other.pesoObjetivo == pesoObjetivo) &&
+            (identical(other.genero, genero) || other.genero == genero) &&
+            (identical(other.fechaNacimiento, fechaNacimiento) ||
+                other.fechaNacimiento == fechaNacimiento) &&
+            (identical(other.nivelActividad, nivelActividad) ||
+                other.nivelActividad == nivelActividad) &&
+            (identical(other.objetivoSalud, objetivoSalud) ||
+                other.objetivoSalud == objetivoSalud));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, name, email, fechaRegistro);
+  int get hashCode => Object.hash(
+    runtimeType,
+    id,
+    name,
+    email,
+    fechaRegistro,
+    altura,
+    pesoObjetivo,
+    genero,
+    fechaNacimiento,
+    nivelActividad,
+    objetivoSalud,
+  );
 
   /// Create a copy of AppUser
   /// with the given fields replaced by the non-null parameter values.
@@ -203,6 +339,12 @@ abstract class _AppUser implements AppUser {
     required final String name,
     required final String email,
     required final DateTime fechaRegistro,
+    required final double altura,
+    required final double pesoObjetivo,
+    required final String genero,
+    required final DateTime fechaNacimiento,
+    required final String nivelActividad,
+    final String? objetivoSalud,
   }) = _$AppUserImpl;
 
   factory _AppUser.fromJson(Map<String, dynamic> json) = _$AppUserImpl.fromJson;
@@ -214,7 +356,19 @@ abstract class _AppUser implements AppUser {
   @override
   String get email;
   @override
-  DateTime get fechaRegistro;
+  DateTime get fechaRegistro; // Datos inamovibles del perfil
+  @override
+  double get altura; // en cm
+  @override
+  double get pesoObjetivo; // en kg
+  @override
+  String get genero; // 'masculino' o 'femenino'
+  @override
+  DateTime get fechaNacimiento;
+  @override
+  String get nivelActividad; // 'sedentario', 'ligero', 'moderado', 'intenso', 'muy_intenso'
+  @override
+  String? get objetivoSalud;
 
   /// Create a copy of AppUser
   /// with the given fields replaced by the non-null parameter values.
