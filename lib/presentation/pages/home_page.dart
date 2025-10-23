@@ -127,7 +127,7 @@ class _HomePageState extends ConsumerState<HomePage>
           foregroundColor: Colors.black,
           elevation: 0,
           shadowColor: Colors.transparent,
-
+          surfaceTintColor: Colors.transparent,
           actions: [
             IconButton(
               icon: const Icon(Icons.person),

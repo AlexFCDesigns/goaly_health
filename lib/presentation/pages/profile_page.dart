@@ -111,6 +111,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
         ),
         backgroundColor: Colors.transparent,
         foregroundColor: Colors.black,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         shadowColor: Colors.transparent,
       ),
